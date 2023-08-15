@@ -1,25 +1,23 @@
 <script lang="ts">
   import { fade } from "svelte/transition";
 
-  import { StyleFromScheme, LinearProgressIndeterminate, Button, Card, CardClickable } from "m3-svelte";
+  import { StyleFromScheme, LinearProgressIndeterminate, CardClickable } from "m3-svelte";
   import { onMount } from "svelte";
-  import { updateWebAppStore, webAppStore } from "$lib/webapp/store";
-  import { defaultTheme, getSchemes } from "$lib/webapp/theme";
-  import type TelegramBot from "node-telegram-bot-api";
+  import { updateWebAppStore, webAppStore, themeStore, updateThemeStore } from "$lib/webapp/store";
   import { _, locale } from "$lib/i18n/i18n";
   import Icon from "@iconify/svelte";
+  import SelectPayer from "./states/SelectPayer.svelte";
 
-  let theme = defaultTheme;
   let loaded = false;
   let error = false;
-  let groups: TelegramBot.Chat[] = [];
+  let groups: Group[] = [];
 
   onMount(async () => {
     updateWebAppStore();
     locale.set($webAppStore?.initDataUnsafe?.user?.language_code);
 
     document.body.classList.add($webAppStore?.colorScheme);
-    if ($webAppStore?.themeParams?.button_color) theme = getSchemes($webAppStore?.themeParams.button_color, $webAppStore?.colorScheme === "dark");
+    updateThemeStore($webAppStore);
 
     const response = await fetch("/webapp/api", {
       method: "POST",
@@ -29,18 +27,38 @@
     });
 
     if (response.status === 200) {
-      const data = await response.json();
+      const data = (await response.json()) as UserData;
 
-      groups = data.groups || [];
+      groups = data.groups;
     } else {
       error = true;
     }
 
+    $webAppStore?.ready();
+    $webAppStore?.BackButton.hide();
+
+    $webAppStore?.BackButton.onClick(() => {
+      states.pop();
+      states = states;
+
+      if (states.length <= 0) $webAppStore?.BackButton.hide();
+    });
+
     loaded = true;
   });
+
+  let states = [] as any[];
+
+  function openGroup(group: Group) {
+    states.push(group);
+    states = states;
+
+    $webAppStore?.expand();
+    $webAppStore?.BackButton.show();
+  }
 </script>
 
-<StyleFromScheme lightScheme={theme.lightScheme} darkScheme={theme.darkScheme} />
+<StyleFromScheme lightScheme={$themeStore.lightScheme} darkScheme={$themeStore.darkScheme} />
 
 {#if !loaded}
   <div transition:fade class="bg-white dark:bg-neutral-900 fixed inset-0 z-50 flex flex-col">
@@ -55,13 +73,25 @@
   </div>
 {/if}
 
-<div class="flex flex-col gap-2">
-  {#each groups as group}
-    <CardClickable type="outlined">
-      <div class="flex items-center gap-3">
-        <Icon class="text-3xl" icon="fluent-emoji:money-bag" />
-        <span class="font-bold">{group.title}</span>
-      </div>
-    </CardClickable>
-  {/each}
-</div>
+{#if states.length <= 0}
+  <div in:fade>
+    <p class="mb-3 text-sm opacity-80 font-semibold">{$_("app.select_group")}</p>
+
+    <div class="flex flex-col gap-2">
+      {#each groups as group}
+        <CardClickable type="outlined" on:click={() => openGroup(group)}>
+          <div class="flex items-center gap-3">
+            <Icon class="text-3xl" icon="fluent-emoji:classical-building" />
+            <span class="font-bold">{group.title}</span>
+          </div>
+        </CardClickable>
+      {/each}
+    </div>
+  </div>
+{/if}
+
+{#if states.length === 1}
+  <div in:fade>
+    <SelectPayer group={states[0]} />
+  </div>
+{/if}
