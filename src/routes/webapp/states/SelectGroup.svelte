@@ -1,22 +1,44 @@
 <script lang="ts">
-  import { CardClickable } from "m3-svelte";
   import { _ } from "$lib/i18n/i18n";
-  import Icon from "@iconify/svelte";
+  import { createEventDispatcher } from "svelte";
+  import ListCard from "$lib/components/ListCard.svelte";
+  import { webAppStore, stateStore } from "$lib/webapp/store";
+  import LoadingCard from "$lib/components/LoadingCard.svelte";
+  import { fade } from "svelte/transition";
+  import { updateBackButton } from "$lib/webapp/utils";
 
-  export let groups: Group[];
+  const dispatch = createEventDispatcher();
 
-  function openGroup(group: Group) {}
+  let loading = true;
+
+  webAppStore.subscribe(async () => {
+    updateBackButton();
+
+    if ($stateStore.groups) return (loading = false);
+
+    const response = await fetch("/webapp/api/groups?" + new URLSearchParams({ login: $webAppStore?.initData }));
+
+    loading = false;
+
+    if (response.status === 200) stateStore.set({ ...$stateStore, groups: (await response.json()).groups });
+  });
+
+  function selectGroup(group: Group) {
+    stateStore.set({ ...$stateStore, group: group, phase: 1 });
+    dispatch("next");
+  }
 </script>
 
-<p class="mb-3 text-sm opacity-80 font-semibold">{$_("app.select_group")}</p>
+<p class="mb-3 hint">{$_("app.select_group")}</p>
 
-<div class="flex flex-col gap-2">
-  {#each groups as group}
-    <CardClickable type="outlined" on:click={() => openGroup(group)}>
-      <div class="flex items-center gap-3">
-        <Icon class="text-3xl" icon="fluent-emoji:classical-building" />
-        <span class="font-bold">{group.title}</span>
-      </div>
-    </CardClickable>
-  {/each}
-</div>
+{#if !loading}
+  <div class="flex flex-col gap-2" in:fade>
+    {#each $stateStore.groups || [] as group}
+      <ListCard on:click={() => selectGroup(group)} icon="fluent-emoji:classical-building" name={group.title} />
+    {/each}
+  </div>
+{:else}
+  <div in:fade>
+    <LoadingCard />
+  </div>
+{/if}

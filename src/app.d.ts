@@ -21,10 +21,56 @@ declare global {
 
   interface Group extends TelegramBot.Chat {
     members: TelegramBot.User[];
+    splits?: TransactionData[];
+    payments?: TransactionData[];
   }
   interface UserData {
     user: TelegramBot.User;
     groups: Group[];
+  }
+
+  interface PaymentInformation {
+    id?: string;
+    description?: string;
+    amount: number;
+    from: TelegramBot.User;
+    to?: TelegramBot.User;
+  }
+
+  type SplitMode = "equally" | "unequally" | "percentages" | "shares";
+
+  interface UserSplit extends TelegramBot.User {
+    selected: boolean;
+    amount: number | null;
+  }
+
+  interface SplitInformation {
+    mode: SplitMode;
+    splits: UserSplit[];
+  }
+
+  interface TransactionData {
+    _id?: string;
+    group: TelegramBot.Chat;
+    date: Date;
+    description?: string;
+    amount: number;
+    from: TelegramBot.User;
+    to?: TelegramBot.User;
+    mode?: SplitMode;
+    splits?: UserSplit[];
+  }
+
+  interface TransactionGraph {
+    from: TelegramBot.User;
+    to: TelegramBot.User;
+    amount: number;
+  }
+
+  interface GraphData extends TelegramBot.User {
+    debts: (TelegramBot.User & {
+      amount: number;
+    })[];
   }
 }
 

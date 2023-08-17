@@ -3,3 +3,75 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+* {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+body {
+  background-color: var(--tg-theme-bg-color);
+  color: var(--tg-theme-text-color);
+}
+
+.bg-primary {
+  background-color: var(--tg-theme-button-color);
+  color: var(--tg-theme-button-text-color);
+}
+
+.text-primary {
+  color: var(--tg-theme-button-color);
+}
+
+.hint {
+  @apply text-sm font-semibold;
+  color: var(--tg-theme-hint-color);
+}
+
+.text-bg {
+  color: var(--tg-theme-bg-color);
+}
+
+.border-tg {
+  border-color: var(--tg-theme-hint-color);
+}
+
+.fill-tg {
+  fill: var(--tg-theme-button-text-color);
+}
+
+.bg-second {
+  background-color: var(--tg-theme-secondary-bg-color);
+}
+
+.ripple-effect .ripple,
+.dark button.ripple-effect .ripple {
+  background-color: var(--ripple-color, rgba(0, 0, 0, 0.04)) !important;
+}
+
+.dark .ripple-effect .ripple {
+  background-color: var(--ripple-color, rgba(255, 255, 255, 0.04)) !important;
+}
+
+.border-active-primary:active,
+.border-active-primary:focus,
+.outline-tg {
+  @apply outline outline-2;
+  outline-color: var(--tg-theme-button-color);
+  border-color: var(--tg-theme-button-color) !important;
+}
+
+button {
+  @apply p-3 rounded-md text-sm font-bold;
+  background-color: var(--tg-theme-button-color);
+  color: var(--tg-theme-button-text-color);
+}
+
+button.delete {
+  @apply py-2 bg-red-500 text-white;
+}

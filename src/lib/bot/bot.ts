@@ -1,8 +1,8 @@
 import { env } from "$env/dynamic/private";
 import TelegramBot from "node-telegram-bot-api";
 import { translate } from "../i18n/i18n";
-import { groupMembers, registerGroup, registerUserInGroup } from "../db/interface";
-import { memberToList } from "./utils";
+import { getGroupById, groupMembers, registerGroup, registerUserInGroup, simplifyTransactions } from "../db/interface";
+import { formatUser, memberToList, pmd2 } from "./utils";
 
 const BOT_TOKEN = env.BOT_TOKEN;
 const BASE_HOST = env.APP_HOST;
@@ -42,7 +42,11 @@ bot.onText(/\/start|\/setup/, async (message) => {
     bot.sendMessage(message.chat.id, translate(languageCode, "bot.add_to_group"), {
       parse_mode: "MarkdownV2",
       reply_markup: {
-        inline_keyboard: [[{ text: "Spese", web_app: { url: BASE_HOST + "/webapp" } }]],
+        inline_keyboard: [
+          [{ text: "Spese", web_app: { url: BASE_HOST + "/webapp/add-split" } }],
+          [{ text: "Paga", web_app: { url: BASE_HOST + "/webapp/add-payment" } }],
+          [{ text: "Transazioni", web_app: { url: BASE_HOST + "/webapp/list" } }],
+        ],
       },
     });
 
@@ -51,7 +55,7 @@ bot.onText(/\/start|\/setup/, async (message) => {
       menu_button: {
         text: translate(languageCode, "bot.menu_button"),
         type: "web_app",
-        web_app: { url: BASE_HOST + "/webapp" },
+        web_app: { url: BASE_HOST + "/webapp/add-split" },
       },
     });
 
@@ -105,3 +109,32 @@ async function registerUser(user: TelegramBot.User, message: TelegramBot.Message
     sendError(message.chat.id, languageCode, error);
   }
 }
+
+bot.onText(/\/split/, async (message) => {
+  const languageCode = message.from?.language_code;
+
+  try {
+    const group = await getGroupById(message.chat.id);
+    const graph = (await simplifyTransactions(group)) || [];
+
+    let sendMessage = "";
+
+    graph.forEach((g) => {
+      sendMessage += `\n🧙‍♂️ ${formatUser(g)}\n`;
+
+      g.debts.forEach((d) => {
+        if (d.amount === 0) return (sendMessage += "  ↳ " + translate(languageCode, "bot.is_pair") + "\n");
+
+        sendMessage += `  ↳ ` + pmd2(Math.abs(d.amount).toFixed(2)) + ` ¤`;
+        sendMessage += d.amount > 0 ? " ⏩ " : " ⏪ ";
+        sendMessage += `${formatUser(d)}\n`;
+      });
+    });
+
+    return bot.sendMessage(message.chat.id, sendMessage, {
+      parse_mode: "MarkdownV2",
+    });
+  } catch (error) {
+    sendError(message.chat.id, languageCode, error);
+  }
+});
