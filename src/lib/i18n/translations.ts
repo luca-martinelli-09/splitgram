@@ -4,10 +4,10 @@ export type Dictionary = Record<SupportedLanguage, Record<string, string>>;
 export const dictionary = {
   default: {
     "bot.menu_button": "Home",
-    "bot.group.registered": `*🪙 Hi, I'm SplitGram, the Telegram bot that helps your group split expenses\\.*\n\n*❓ How does it work?*\n\\- Each member of the group has to press "Join"\n\\- In the private chat with the bot everyone can manage all payments and expenses for all groups\n\\- Use the \/split command in this group to see the splits\\.\n\n❓ What "¤" means.\n"¤" is the generic currency symbol`,
+    "bot.group.registered": `*🪙 Hi, I'm SplitGram, the Telegram bot that helps your group split expenses\\.*\n\n*❓ How does it work?*\n\\- Each member of the group has to press "Join"\n\\- In the private chat with the bot everyone can manage all payments and expenses for all groups\n\\- Use the \/split command in this group to see the splits\\.\n\n*❓ What "¤" means?*\n"¤" is the generic currency symbol`,
     "bot.group.adduser": "Join",
     "bot.error": "Oh no, an error occurred 😞",
-    "bot.add_to_group": `*🪙 Hi, I'm SplitGram, the Telegram bot that helps your group split expenses\\.*\n\n*❓ How does it work?*\n\\- Add the bot to your group\n\\- Wait for all group members to join\n\\- Use the \/app command to launch the webapp and manage expenses and splits\\.\n\n❓ What "¤" means.\n"¤" is the generic currency symbol`,
+    "bot.add_to_group": `*🪙 Hi, I'm SplitGram, the Telegram bot that helps your group split expenses\\.*\n\n*❓ How does it work?*\n\\- Add the bot to your group\n\\- Wait for all group members to join\n\\- Use the \/app command to launch the webapp and manage expenses and splits\\.\n\n*❓ What "¤" means?*\n"¤" is the generic currency symbol`,
     "bot.added_split": "💰 {{from}} added an expense of {{amount}} ¤",
     "bot.added_payment": "💸 {{from}} sent {{to}} {{amount}} ¤",
     "bot.is_pair": "is balanced",
@@ -56,10 +56,10 @@ export const dictionary = {
   },
   it: {
     "bot.menu_button": "Home",
-    "bot.group.registered": `*🪙 Ciao, sono SplitGram, il bot Telegram che aiuta il tuo gruppo a dividere le spese\\.*\n\n*❓ Come funziona?*\n\\- Ogni membro del gruppo deve premere su "Partecipa"\n\\- Nella chat privata con il bot ognuno potrà gestire tutti i pagamenti e le spese per tutti i gruppi\n\\- Usa il comando \/split in questo gruppo per vedere le divisioni\\.\n\n❓ Cosa significa "¤"\n"¤" è il simbolo generico di valuta\n\nPartecipanti:\n{{members}}`,
+    "bot.group.registered": `*🪙 Ciao, sono SplitGram, il bot Telegram che aiuta il tuo gruppo a dividere le spese\\.*\n\n*❓ Come funziona?*\n\\- Ogni membro del gruppo deve premere su "Partecipa"\n\\- Nella chat privata con il bot ognuno potrà gestire tutti i pagamenti e le spese per tutti i gruppi\n\\- Usa il comando \/split in questo gruppo per vedere le divisioni\\.\n\n*❓ Cosa significa "¤"?*\n"¤" è il simbolo generico di valuta\n\nPartecipanti:\n{{members}}`,
     "bot.group.adduser": "Partecipa",
     "bot.error": "Oh no, si è verificato un errore 😞",
-    "bot.add_to_group": `*🪙 Ciao, sono SplitGram, il bot Telegram che aiuta il tuo gruppo a dividere le spese\\.*\n\n*❓ Come funziona?*\n\\- Aggiungi il bot al tuo gruppo\n\\- Aspetta che tutti i membri del gruppo si uniscano\n\\- Usa il comando \/app per lanciare la webapp e gestire spese e divisioni\\.\n\n❓ Cosa significa "¤"\n"¤" è il simbolo generico di valuta`,
+    "bot.add_to_group": `*🪙 Ciao, sono SplitGram, il bot Telegram che aiuta il tuo gruppo a dividere le spese\\.*\n\n*❓ Come funziona?*\n\\- Aggiungi il bot al tuo gruppo\n\\- Aspetta che tutti i membri del gruppo si uniscano\n\\- Usa il comando \/app per lanciare la webapp e gestire spese e divisioni\\.\n\n*❓ Cosa significa "¤"?*\n"¤" è il simbolo generico di valuta`,
     "bot.added_split": "💰 {{from}} ha aggiunto una spesa di {{amount}} ¤",
     "bot.added_payment": "💸 {{from}} ha inviato a {{to}} {{amount}} ¤",
     "bot.is_pair": "è in pari",
