@@ -1,38 +1,43 @@
-# create-svelte
+<p align="center">
+  <img src="./static/favicon.png" width="150" title="SplitGram">
+</p>
+<h1 align="center">SplitGram</h1>
 
-Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/master/packages/create-svelte).
+[@SplitGram_bot](https://t.me/SplitGram_bot) on Telegram
 
-## Creating a project
+## ❓ How does it work?
 
-If you're seeing this, you've probably already done this step. Congrats!
+- Add the bot to your group;
+- Wait for all group members to join;
+- Use the /app command to launch the webapp and manage expenses and splits.
+
+## ❓ What "¤" means?
+
+"¤" is the generic currency symbol.
+
+## Run on custom server
+
+First, you need to create a `.env` file compiling the `.env.example` file.
+
+You need to create a Telegram Bot and retrieving the BOT APY KEY
+
+You need to create a MongoDB database with the following collections:
+
+- users
+- groups
+- splits
+- payments
+
+Then, you can simply run the Dockerized version with the command:
 
 ```bash
-# create a new project in the current directory
-npm create svelte@latest
-
-# create a new project in my-app
-npm create svelte@latest my-app
+docker compose up -d
 ```
 
-## Developing
+## Contribution
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+Any contribution is well accepted, as reporting any issue you found!
 
-```bash
-npm run dev
+## Donating
 
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
-
-## Building
-
-To create a production version of your app:
-
-```bash
-npm run build
-```
-
-You can preview the production build with `npm run preview`.
-
-> To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
+If you want to support me, you can do it via PayPal at [@MartinelliLuca](https://paypal.me/MartinelliLuca). **Thank you!**
