@@ -49,8 +49,6 @@
 
 <svelte:head>
   <title>SplitGram</title>
-
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </svelte:head>
 
 {#if !loaded}
