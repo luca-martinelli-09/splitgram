@@ -1,0 +1,17 @@
+version: "3"
+
+services:
+  external:
+    container_name: splitgram
+    build:
+      context: .
+      dockerfile: Dockerfile
+    user: "node"
+    environment:
+      - NODE_ENV=production
+      - TZ=Europe/Rome
+    env_file:
+      - .env
+    restart: unless-stopped
+    ports:
+      - 5173:3000
