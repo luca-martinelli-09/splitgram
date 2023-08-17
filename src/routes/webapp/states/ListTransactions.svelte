@@ -38,7 +38,6 @@
 
   function setMyGraph() {
     myGraph = $stateStore.graph?.filter((m) => m.id === $stateStore.user?.id).pop();
-    console.log(myGraph);
   }
 
   function editTransaction(transaction: TransactionData) {
