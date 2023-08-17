@@ -1,6 +1,4 @@
 <script lang="ts">
-  import "../../app.css";
-
   import Loading from "$lib/components/Loading.svelte";
   import { fade } from "svelte/transition";
   import { _, locale } from "$lib/i18n/i18n";
