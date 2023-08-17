@@ -38,6 +38,17 @@
 
       stateStore.set({ ...$stateStore, phase: $stateStore.phase >= 4 ? 1 : Math.max(0, $stateStore.phase - 1) });
 
+      if ($stateStore.phase === 0) {
+        stateStore.set({
+          ...$stateStore,
+          graph: null,
+          group: null,
+          transactions: null,
+          paymentInformation: null,
+          splitInformation: null,
+        });
+      }
+
       updateBackButton();
     });
 
