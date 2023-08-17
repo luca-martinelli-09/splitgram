@@ -1,7 +1,7 @@
 import type { RequestHandler } from "./$types";
 import { addPayment } from "$lib/db/interface";
 import { formatUser, pmd2, verifyTelegram } from "$lib/bot/utils";
-import { bot } from "$lib/bot/bot";
+import { bot, OPEN_PRIVATE_KEYBOARD } from "$lib/bot/bot";
 import { translate } from "$lib/i18n/i18n";
 
 export const POST: RequestHandler = async ({ url, request }) => {
@@ -27,6 +27,7 @@ export const POST: RequestHandler = async ({ url, request }) => {
       }),
       {
         parse_mode: "MarkdownV2",
+        reply_markup: OPEN_PRIVATE_KEYBOARD(user.language_code),
       }
     );
 

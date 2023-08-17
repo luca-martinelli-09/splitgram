@@ -16,6 +16,19 @@ export const setWebhook = async () => {
   return await bot.setWebHook(`${BASE_HOST}/bot`);
 };
 
+function sendPrivateMessage(chatId: number, languageCode: string | undefined) {
+  bot.sendMessage(chatId, translate(languageCode, "bot.add_to_group"), {
+    parse_mode: "MarkdownV2",
+    reply_markup: {
+      inline_keyboard: [
+        [{ text: translate(languageCode, "bot.list_transactions"), web_app: { url: BASE_HOST + "/webapp/list" } }],
+        [{ text: translate(languageCode, "bot.add_split"), web_app: { url: BASE_HOST + "/webapp/add-split" } }],
+        [{ text: translate(languageCode, "bot.add_payment"), web_app: { url: BASE_HOST + "/webapp/add-payment" } }],
+      ],
+    },
+  });
+}
+
 const sendError = (chatId: TelegramBot.ChatId, languageCode: string | undefined, error: any) => {
   console.log(error);
   bot.sendMessage(chatId, translate(languageCode, "bot.error"));
@@ -33,31 +46,25 @@ const ADD_USER_KEYBOARD = (languageCode: string | undefined) =>
     ],
   } as TelegramBot.InlineKeyboardMarkup);
 
-bot.onText(/\/start|\/setup/, async (message) => {
+export const OPEN_PRIVATE_KEYBOARD = (languageCode: string | undefined) =>
+  ({
+    inline_keyboard: [
+      [
+        {
+          text: translate(languageCode, "bot.private_chat"),
+          callback_data: "openbot",
+        },
+      ],
+    ],
+  } as TelegramBot.InlineKeyboardMarkup);
+
+bot.onText(/\/start|\/setup|\/app/, async (message) => {
   const languageCode = message.from?.language_code;
 
   if (message.chat.type === "channel") return;
 
   if (message.chat.type === "private") {
-    bot.sendMessage(message.chat.id, translate(languageCode, "bot.add_to_group"), {
-      parse_mode: "MarkdownV2",
-      reply_markup: {
-        inline_keyboard: [
-          [{ text: "Spese", web_app: { url: BASE_HOST + "/webapp/add-split" } }],
-          [{ text: "Paga", web_app: { url: BASE_HOST + "/webapp/add-payment" } }],
-          [{ text: "Transazioni", web_app: { url: BASE_HOST + "/webapp/list" } }],
-        ],
-      },
-    });
-
-    bot.setChatMenuButton({
-      chat_id: message.chat.id,
-      menu_button: {
-        text: translate(languageCode, "bot.menu_button"),
-        type: "web_app",
-        web_app: { url: BASE_HOST + "/webapp/add-split" },
-      },
-    });
+    sendPrivateMessage(message.chat.id, languageCode);
 
     return;
   }
@@ -85,6 +92,7 @@ bot.on("callback_query", (query) => {
   if (!query.message) return;
 
   if (query.data === "adduser") registerUser(query.from, query.message);
+  else if (query.data === "openbot") sendPrivateMessage(query.from.id, query.from.language_code);
 });
 
 async function registerUser(user: TelegramBot.User, message: TelegramBot.Message) {
@@ -133,6 +141,7 @@ bot.onText(/\/split/, async (message) => {
 
     return bot.sendMessage(message.chat.id, sendMessage, {
       parse_mode: "MarkdownV2",
+      reply_markup: OPEN_PRIVATE_KEYBOARD(languageCode),
     });
   } catch (error) {
     sendError(message.chat.id, languageCode, error);

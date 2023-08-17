@@ -83,8 +83,7 @@
 
   {#if splitMode === "unequally" || splitMode === "percentages" || splitMode === "shares"}
     <p class="hint">
-      {$_("total")}: {splitMode === "unequally" ? "¤" : ""}
-      {membersSplit.reduce((s, m) => (s += m.selected ? getNumber(m.amount) : 0), 0)}{splitMode === "percentages" ? "%" : ""}
+      {$_("total")}: {membersSplit.reduce((s, m) => (s += m.selected ? getNumber(m.amount) : 0), 0)}{splitMode === "unequally" ? " ¤" : splitMode === "percentages" ? "%" : ""}
     </p>
   {/if}
 
