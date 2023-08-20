@@ -35,5 +35,5 @@ export const fadeOptions = { duration: 200 };
 export const formatDate = (date: Date | string) => {
   date = new Date(date);
 
-  return `${date.getDay().toString().padStart(2, "0")}/${(date.getMonth() + 1).toString().padStart(2, "0")}/${date.getFullYear()}`;
+  return `${date.getDate().toString().padStart(2, "0")}/${(date.getMonth() + 1).toString().padStart(2, "0")}/${date.getFullYear()}`;
 };
