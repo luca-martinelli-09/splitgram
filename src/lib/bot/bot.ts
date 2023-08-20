@@ -97,7 +97,7 @@ bot.on("callback_query", (query) => {
 
   if (query.data === "adduser") registerUser(query.from, query.message);
   else if (query.data === "openbot") sendPrivateMessage(query.from.id, query.from.language_code);
-  else if (query.data === "split") sendSplitExpenses(query.message);
+  else if (query.data === "split") sendSplitExpenses(query.from, query.message);
 });
 
 async function registerUser(user: TelegramBot.User, message: TelegramBot.Message) {
@@ -123,8 +123,8 @@ async function registerUser(user: TelegramBot.User, message: TelegramBot.Message
   }
 }
 
-async function sendSplitExpenses(message: TelegramBot.Message) {
-  const languageCode = message.from?.language_code;
+async function sendSplitExpenses(user: TelegramBot.User | undefined, message: TelegramBot.Message) {
+  const languageCode = user?.language_code;
 
   try {
     const group = await getGroupById(message.chat.id);
@@ -156,5 +156,5 @@ async function sendSplitExpenses(message: TelegramBot.Message) {
 }
 
 bot.onText(/\/split/, async (message) => {
-  sendSplitExpenses(message);
+  sendSplitExpenses(message.from, message);
 });
