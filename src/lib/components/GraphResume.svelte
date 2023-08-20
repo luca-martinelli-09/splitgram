@@ -3,11 +3,11 @@
   import Icon from "@iconify/svelte";
   import { ripple } from "svelte-ripple-action";
 
-  export let graph: GraphData;
+  export let debts: Debt[];
 
   let expanded = false;
 
-  $: debtsSum = graph.debts.reduce((s, d) => (s += d.amount), 0);
+  $: debtsSum = debts.reduce((s, d) => (s += d.amount), 0);
 </script>
 
 <div class={"p-3 flex flex-col text-white rounded-xl " + (debtsSum <= 0 ? "bg-green-500" : "bg-red-500")} use:ripple on:click={() => (expanded = !expanded)} role="button" on:keypress tabindex="0">
@@ -20,7 +20,7 @@
 
     {#if expanded}
       <div class="flex flex-col mt-2">
-        {#each graph.debts as debt}
+        {#each debts as debt}
           {#if debt.amount !== 0}
             <div class="text-xs flex items-center gap-2">
               <span class="font-bold">{Math.abs(debt.amount).toFixed(2)} ¤</span>

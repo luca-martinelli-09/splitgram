@@ -13,7 +13,7 @@
 
   let loading = true;
 
-  let myGraph: GraphData | undefined;
+  let myDebts: Debt[] | undefined;
 
   onMount(async () => {
     updateBackButton();
@@ -37,7 +37,7 @@
   });
 
   function setMyGraph() {
-    myGraph = $stateStore.graph?.filter((m) => m.id === $stateStore.user?.id).pop();
+    myDebts = $stateStore.graph?.filter((m) => m.id === $stateStore.user?.id).pop()?.debts || [];
   }
 
   function editTransaction(transaction: TransactionData) {
@@ -66,9 +66,9 @@
 
 <StatusTitle title={$stateStore?.group?.title} icon="fluent-emoji:classical-building" />
 
-{#if !loading && myGraph}
+{#if !loading && myDebts}
   <div class="flex flex-col gap-2" in:fade>
-    <GraphResume graph={myGraph} />
+    <GraphResume debts={myDebts} />
   </div>
 {:else if loading}
   <div in:fade>

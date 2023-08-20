@@ -67,10 +67,12 @@ declare global {
     amount: number;
   }
 
+  type Debt = TelegramBot.User & {
+    amount: number;
+  };
+
   interface GraphData extends TelegramBot.User {
-    debts: (TelegramBot.User & {
-      amount: number;
-    })[];
+    debts: Debt[];
   }
 }
 
