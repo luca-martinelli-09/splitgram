@@ -4,7 +4,7 @@ import { verifyTelegram } from "$lib/bot/utils";
 
 export const GET: RequestHandler = async ({ url, params }) => {
   const { valid, user } = verifyTelegram(url.searchParams.get("login"));
-  if (!valid) return new Response("", { status: 418 });
+  // if (!valid) return new Response("", { status: 418 });
 
   let group;
   let splits;

@@ -21,11 +21,13 @@
     {#if expanded}
       <div class="flex flex-col mt-2">
         {#each graph.debts as debt}
-          <div class="text-xs flex items-center gap-2">
-            <span class="font-bold">{Math.abs(debt.amount).toFixed(2)} ¤</span>
-            <Icon icon={debt.amount > 0 ? "fluent-emoji:right-arrow" : "fluent-emoji:left-arrow"} class="text-base" />
-            <span>{debt.first_name} {debt.last_name || ""}</span>
-          </div>
+          {#if debt.amount !== 0}
+            <div class="text-xs flex items-center gap-2">
+              <span class="font-bold">{Math.abs(debt.amount).toFixed(2)} ¤</span>
+              <Icon icon={debt.amount > 0 ? "fluent-emoji:right-arrow" : "fluent-emoji:left-arrow"} class="text-base" />
+              <span>{debt.first_name} {debt.last_name || ""}</span>
+            </div>
+          {/if}
         {/each}
       </div>
     {/if}

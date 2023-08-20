@@ -280,15 +280,64 @@ export const getPayments = async (group: Group) => {
   return payments as TransactionData[];
 };
 
+function getMaxAndMin(amount: Record<string, number>) {
+  let maxIndex: string | null = null;
+  let minIndex: string | null = null;
+
+  Object.entries(amount).forEach(([index, value]) => {
+    if (maxIndex === null) maxIndex = index;
+    if (minIndex === null) minIndex = index;
+
+    if (value >= amount[maxIndex]) maxIndex = index;
+    if (value <= amount[minIndex]) minIndex = index;
+  });
+
+  return [maxIndex, minIndex];
+}
+
+function calculateMinCashGraph(amount: Record<string, number>, transactions = {} as Record<string, Record<string, number>>) {
+  var [mxCredit, mxDebit] = getMaxAndMin(amount);
+
+  if (!mxCredit || !mxDebit) return transactions;
+
+  if (amount[mxCredit] == 0 && amount[mxDebit] == 0) return transactions;
+
+  var min = Math.min(-amount[mxDebit], amount[mxCredit]);
+  amount[mxCredit] -= min;
+  amount[mxDebit] += min;
+
+  if (!transactions[mxDebit]) transactions[mxDebit] = {};
+  if (!transactions[mxCredit]) transactions[mxCredit] = {};
+  transactions[mxDebit][mxCredit] = min;
+  transactions[mxCredit][mxDebit] = -min;
+
+  return calculateMinCashGraph(amount, transactions);
+}
+
+function minCashGraph(graph: Record<string, Record<string, number>>) {
+  var amount = {} as Record<string, number>;
+
+  Object.keys(graph).forEach((fromId) => {
+    amount[fromId] = 0;
+    Object.keys(graph).forEach((toId) => {
+      amount[fromId] += (graph[toId][fromId] || 0) - (graph[fromId][toId] || 0);
+    });
+  });
+
+  return calculateMinCashGraph(amount);
+}
+
 export const simplifyTransactions = async (group: Group, splits: TransactionData[] | null = null, payments: TransactionData[] | null = null) => {
   splits = splits || ((await getSplits(group)) as TransactionData[]);
   payments = payments || ((await getPayments(group)) as TransactionData[]);
 
-  const groupMembers = group.members.reduce((g, m) => {
-    g[m.id] = m;
+  const groupMembers = group.members
+    .sort((a, b) => a.first_name.localeCompare(b.first_name))
+    .reduce((g, m) => {
+      g[m.id] = m;
 
-    return g;
-  }, {} as Record<string, TelegramBot.User>);
+      return g;
+    }, {} as Record<string, TelegramBot.User>);
 
   const usersGraph = {} as Record<string, Record<string, number>>;
   Object.keys(groupMembers).forEach((fromId) => {
@@ -322,15 +371,16 @@ export const simplifyTransactions = async (group: Group, splits: TransactionData
 
   allTransactions.forEach((transaction) => {
     usersGraph[transaction.from.id][transaction.to.id] += transaction.amount;
-    usersGraph[transaction.to.id][transaction.from.id] -= transaction.amount;
   });
+
+  const simplifiedGraph = minCashGraph(usersGraph);
 
   const finalGraph = [] as GraphData[];
 
   group.members.forEach((member) => {
     const graph = { ...member, debts: [] } as GraphData;
 
-    Object.entries(usersGraph[member.id]).forEach(([toId, amount]) => {
+    Object.entries(simplifiedGraph[member.id]).forEach(([toId, amount]) => {
       graph.debts.push({ ...groupMembers[toId], amount });
     });
 
