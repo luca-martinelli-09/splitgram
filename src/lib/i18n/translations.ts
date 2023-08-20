@@ -65,7 +65,7 @@ export const dictionary = {
     "bot.added_split": "💰 {{from}} ha aggiunto una spesa di {{amount}} ¤",
     "bot.added_payment": "💸 {{from}} ha inviato a {{to}} {{amount}} ¤",
     "bot.is_pair": "è in pari",
-    "bot.group.is_pair": "Complimenti, il gruppo è in pari! 🎉",
+    "bot.group.is_pair": "Complimenti, il gruppo è in pari\\! 🎉",
     "bot.add_split": "Aggiungi spesa",
     "bot.add_payment": "Aggiungi pagamento",
     "bot.list_transactions": "Home",
