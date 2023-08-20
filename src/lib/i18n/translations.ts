@@ -14,7 +14,7 @@ export const dictionary = {
     "bot.add_split": "Add expense",
     "bot.add_payment": "Add payment",
     "bot.split": "Split expenses",
-    "bot.group.is_pair": "Yeah! The group is balanced! 🎉",
+    "bot.group.is_pair": "Yeah\\! The group is balanced\\! 🎉",
     "bot.list_transactions": "Home",
     "bot.private_chat": "Open bot",
     "app.login_error": "Hey, wait! You are not supposed to be here!",
