@@ -380,7 +380,7 @@ export const simplifyTransactions = async (group: Group, splits: TransactionData
   group.members.forEach((member) => {
     const graph = { ...member, debts: [] } as GraphData;
 
-    Object.entries(simplifiedGraph[member.id]).forEach(([toId, amount]) => {
+    Object.entries(simplifiedGraph[member.id] || {}).forEach(([toId, amount]) => {
       graph.debts.push({ ...groupMembers[toId], amount });
     });
 

@@ -132,6 +132,8 @@ async function sendSplitExpenses(message: TelegramBot.Message) {
 
     let sendMessage = "";
 
+    if (graph.length <= 0) sendMessage = translate(languageCode, "bot.group.is_pair");
+
     graph.forEach((g) => {
       sendMessage += `\n🧙‍♂️ ${formatUser(g)}\n`;
 
