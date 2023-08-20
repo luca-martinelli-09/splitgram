@@ -54,6 +54,10 @@ export const OPEN_PRIVATE_KEYBOARD = (languageCode: string | undefined) =>
           text: translate(languageCode, "bot.private_chat"),
           callback_data: "openbot",
         },
+        {
+          text: translate(languageCode, "bot.split"),
+          callback_data: "split",
+        },
       ],
     ],
   } as TelegramBot.InlineKeyboardMarkup);
@@ -93,6 +97,7 @@ bot.on("callback_query", (query) => {
 
   if (query.data === "adduser") registerUser(query.from, query.message);
   else if (query.data === "openbot") sendPrivateMessage(query.from.id, query.from.language_code);
+  else if (query.data === "split") sendSplitExpenses(query.message);
 });
 
 async function registerUser(user: TelegramBot.User, message: TelegramBot.Message) {
@@ -118,7 +123,7 @@ async function registerUser(user: TelegramBot.User, message: TelegramBot.Message
   }
 }
 
-bot.onText(/\/split/, async (message) => {
+async function sendSplitExpenses(message: TelegramBot.Message) {
   const languageCode = message.from?.language_code;
 
   try {
@@ -146,4 +151,8 @@ bot.onText(/\/split/, async (message) => {
   } catch (error) {
     sendError(message.chat.id, languageCode, error);
   }
+}
+
+bot.onText(/\/split/, async (message) => {
+  sendSplitExpenses(message);
 });
