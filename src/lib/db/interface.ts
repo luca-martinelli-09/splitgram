@@ -296,13 +296,14 @@ function getMaxAndMin(amount: Record<string, number>) {
 }
 
 function calculateMinCashGraph(amount: Record<string, number>, transactions = {} as Record<string, Record<string, number>>) {
-  var [mxCredit, mxDebit] = getMaxAndMin(amount);
+  const [mxCredit, mxDebit] = getMaxAndMin(amount);
 
   if (!mxCredit || !mxDebit) return transactions;
 
-  if (amount[mxCredit] == 0 && amount[mxDebit] == 0) return transactions;
+  if (amount[mxCredit] <= 0.01 && amount[mxDebit] <= 0.01) return transactions;
 
-  var min = Math.min(-amount[mxDebit], amount[mxCredit]);
+  const min = Math.min(-amount[mxDebit], amount[mxCredit]);
+
   amount[mxCredit] -= min;
   amount[mxDebit] += min;
 
@@ -315,7 +316,7 @@ function calculateMinCashGraph(amount: Record<string, number>, transactions = {}
 }
 
 function minCashGraph(graph: Record<string, Record<string, number>>) {
-  var amount = {} as Record<string, number>;
+  const amount = {} as Record<string, number>;
 
   Object.keys(graph).forEach((fromId) => {
     amount[fromId] = 0;
@@ -325,6 +326,10 @@ function minCashGraph(graph: Record<string, Record<string, number>>) {
   });
 
   return calculateMinCashGraph(amount);
+}
+
+function floorAmount(amount: number) {
+  return Math.floor(amount * 100) / 100;
 }
 
 export const simplifyTransactions = async (group: Group, splits: TransactionData[] | null = null, payments: TransactionData[] | null = null) => {
@@ -370,7 +375,7 @@ export const simplifyTransactions = async (group: Group, splits: TransactionData
   });
 
   allTransactions.forEach((transaction) => {
-    usersGraph[transaction.from.id][transaction.to.id] += transaction.amount;
+    usersGraph[transaction.from.id][transaction.to.id] += floorAmount(transaction.amount);
   });
 
   const simplifiedGraph = minCashGraph(usersGraph);
