@@ -1,10 +1,11 @@
 import type { RequestHandler } from "./$types";
 import { getGroupById, getPayments, getSplits, simplifyTransactions } from "$lib/db/interface";
 import { verifyTelegram } from "$lib/bot/utils";
+import { env } from "$env/dynamic/private";
 
 export const GET: RequestHandler = async ({ url, params }) => {
   const { valid } = verifyTelegram(url.searchParams.get("login"));
-  if (!valid) return new Response("", { status: 418 });
+  if (!valid && parseInt(env.DEBUG || '0') <= 0) return new Response("Unauthorized", { status: 418 });
 
   let group;
   let splits;

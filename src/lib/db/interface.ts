@@ -299,10 +299,11 @@ function calculateMinCashGraph(amount: Record<string, number>, transactions = {}
   const [mxCredit, mxDebit] = getMaxAndMin(amount);
 
   if (!mxCredit || !mxDebit) return transactions;
+  
 
-  if (amount[mxCredit] <= 0.01 && amount[mxDebit] <= 0.01) return transactions;
+  if (floorAmount(amount[mxCredit]) === 0 || floorAmount(amount[mxDebit]) === 0) return transactions;
 
-  const min = Math.min(-amount[mxDebit], amount[mxCredit]);
+  const min = floorAmount(Math.min(-amount[mxDebit], amount[mxCredit]));
 
   amount[mxCredit] -= min;
   amount[mxDebit] += min;
@@ -318,18 +319,22 @@ function calculateMinCashGraph(amount: Record<string, number>, transactions = {}
 function minCashGraph(graph: Record<string, Record<string, number>>) {
   const amount = {} as Record<string, number>;
 
+  console.log(graph)
+
   Object.keys(graph).forEach((fromId) => {
-    amount[fromId] = 0;
+    amount[fromId] = amount[fromId] || 0;
     Object.keys(graph).forEach((toId) => {
       amount[fromId] += (graph[toId][fromId] || 0) - (graph[fromId][toId] || 0);
     });
   });
 
+  console.log(amount)
+
   return calculateMinCashGraph(amount);
 }
 
 function floorAmount(amount: number) {
-  return Math.floor(amount * 100) / 100;
+  return Math.round(amount * 100) / 100;
 }
 
 export const simplifyTransactions = async (group: Group, splits: TransactionData[] | null = null, payments: TransactionData[] | null = null) => {
@@ -354,6 +359,8 @@ export const simplifyTransactions = async (group: Group, splits: TransactionData
 
   const allTransactions = [] as TransactionGraph[];
 
+  console.log(splits)
+
   splits.forEach((split) => {
     const sumShares = split.mode === "shares" ? split.splits?.reduce((t, u) => (t += u.selected ? u.amount || 0 : 0), 0) || 0 : 0;
     const totalSplits = split.splits?.length || 0;
@@ -375,10 +382,14 @@ export const simplifyTransactions = async (group: Group, splits: TransactionData
   });
 
   allTransactions.forEach((transaction) => {
-    usersGraph[transaction.from.id][transaction.to.id] += floorAmount(transaction.amount);
+    usersGraph[transaction.from.id][transaction.to.id] += transaction.amount;
   });
 
+  console.log(allTransactions);
+
   const simplifiedGraph = minCashGraph(usersGraph);
+
+  console.log(simplifiedGraph);
 
   const finalGraph = [] as GraphData[];
 
