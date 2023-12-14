@@ -2,7 +2,6 @@ version: "3"
 
 services:
   external:
-    container_name: splitgram
     build:
       context: .
       dockerfile: Dockerfile
